@@ -35,6 +35,9 @@ Expects file with list of files to end in .txt, can then use mergeJSON.py to com
 
 Download Golden JSON for a chosen year, and split it into individual JSON files for each run period.
 
+### lumi_list_from_das.py
+
+Gets lumilist for dataset from DAS. Only accepts one dataset (& its ext sample, if it exists).
 
 #### Re-processing of missing lumis
 
@@ -72,9 +75,23 @@ Then diff Golden JSON & list of "good" json, e.g.:
 compareJSON.py --sub Golden_2016_RunA.json lumilist_X_nobad.json missing_2016_RunA.json
 ```
 
-You can then use `missing_2016_RunA.json` in your `crab_template` in the `config.Data.lumiMask` attribute.
+You can then use `missing_2016_RunA.json` in your `crab_template.py` in the `config.Data.lumiMask` attribute.
 
-NB not done yet for MC
+5. Only for **MC**: create a reference lumilist JSON for your sample:
+
+```
+./lumi_list_from_das.py <DATASET NAME> dataset_all.json
+```
+
+Then diff the reference and your json of "good" lumisections, e.g.:
+
+```
+compareJSON.py --sub dataset_all.json lumilist_X_nobad.json missing.json
+```
+
+You can then use `missing.json` in your `crab_template.py` in the `config.Data.lumiMask` attribute.
+
+========
 
 ### cleanupXML.sh
 
