@@ -36,6 +36,7 @@ LEGACY_BRANCHES = [
     "RunII_94X_v3",
     "RunII_94X_v2",
     "RunII_94X_v1",
+    "RunII_80X_v6",
     "RunII_80X_v5",
     "RunII_80X_v4",
     "RunII_80X_v3",
@@ -98,14 +99,24 @@ def find_xml_files(start='common/datasets'):
 
 def get_root_files_from_xml(xml_filename):
     root_filenames = []
-    with open(xml_filename) as f:
+    with open(filename) as f:
+        is_comment = False
+        fname_pattern = r'< ?In FileName="(.+)" Lumi="0\.0" ?\/>'
         for line in f:
             line = line.strip()
-            if line.startswith(("<!--", "-->")):
+            if line.startswith("<!--"):
+                is_comment = True
+            if line.endswith("-->"):
+                is_comment = False
                 continue
-            this_line = line.replace('<In FileName="', '').replace('" Lumi="0.0"/>', '')
-            if this_line.startswith(("/nfs", "/pnfs")):
-                root_filenames.append(this_line)
+            if is_comment:
+                continue
+
+            match = re.search(fname_pattern, line.strip())
+            if match is None:
+                continue
+            else:
+                root_filenames.append(match.group(1))
     return root_filenames
 
 

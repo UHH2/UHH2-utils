@@ -15,6 +15,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from time import sleep
+import re
 
 
 def get_ntuple_filenames_from_xml(full_filename):
@@ -30,20 +31,25 @@ def get_ntuple_filenames_from_xml(full_filename):
     generator
         To iterate over filenames
     """
-    with open(full_filename) as f:
+    with open(filename) as f:
         is_comment = False
+        fname_pattern = r'< ?In FileName="(.+)" Lumi="0\.0" ?\/>'
         for line in f:
+            line = line.strip()
             if line.startswith("<!--"):
                 is_comment = True
             if line.endswith("-->"):
                 is_comment = False
+                continue
             if is_comment:
                 continue
-            if line.startswith("<In FileName="):
-                this_line = line.strip()
-                this_line = this_line.replace('<In FileName="', '')
-                this_line = this_line.replace('" Lumi="0.0"/>', '')
-                yield this_line
+
+            match = re.search(fname_pattern, line.strip())
+            if match is None:
+                continue
+            else:
+                fname = match.group(1)
+                yield fname
 
 
 def get_ntuples_from_xml_files(top_directory):
