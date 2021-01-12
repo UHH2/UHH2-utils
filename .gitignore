@@ -1,5 +1,11 @@
-*.pyc
-*.o
+*.csv
 *.dSYM
+*.o
+*.pyc
+*.sqlite
+*.txt
+
 copyAndCompress
 countEvents
+UHHCounting
+UHH2-datasets
