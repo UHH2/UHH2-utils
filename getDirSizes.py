@@ -37,9 +37,30 @@ if __name__ == "__main__":
     output_filename = stem + "_sizes" + ext
     print("Writing to", output_filename)
 
+    total_size = 0
     with open(args.input) as inf, open(output_filename, 'w') as outf:
         for line in inf:
             size = 0
             if os.path.isdir(line.strip()):
                 size = get_dir_size(line.strip())
+                total_size += size
             outf.write(line.strip() + ",%d\n" % size)
+
+    total_size_natural = total_size
+    natural_unit = "kB"
+
+    threshold = 1000
+
+    if total_size_natural > threshold:
+        total_size_natural /= threshold
+        natural_unit = "MB"
+
+    if total_size_natural > threshold:
+        total_size_natural /= threshold
+        natural_unit = "GB"
+
+    if total_size_natural > threshold:
+        total_size_natural /= threshold
+        natural_unit = "TB"
+
+    print("Total:", total_size_natural, natural_unit)
